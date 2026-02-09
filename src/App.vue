@@ -1,11 +1,33 @@
-<script setup></script>
-
 <template>
-  <h1>You did it!</h1>
-  <p>
-    Visit <a href="https://vuejs.org/" target="_blank" rel="noopener">vuejs.org</a> to read the
-    documentation
-  </p>
+  <div>
+    <h1>Board Games</h1>
+
+    <div id="boardgame-gallery">
+      <BoardGameCard
+        v-for="game in boardGamesData"
+        :key="game.id"
+        :title="game.title"
+        :players="game.players"
+        :minutes="game.minutes"
+        @select="onSelect"
+      />
+    </div>
+  </div>
 </template>
 
-<style scoped></style>
+<script setup>
+import BoardGameCard from "./components/BoardGameCard.vue"
+import boardGamesData from "./BoardGameData.js"
+
+function onSelect(gameTitle) {
+  console.log("Selected:", gameTitle)
+}
+</script>
+
+<style scoped>
+#boardgame-gallery {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+</style>
