@@ -10,12 +10,15 @@
 </template>
 
 <script setup>
+
+// props : données reçues du parent. Donc le parent App.vue lui donne title players et minutes
 const props = defineProps({
   title: String,
   players: Number,
   minutes: Number
 })
 
+// gestion d'evenement, déclanchement de l'evenement select quand on clique sur la carte
 const emit = defineEmits(['select'])
 
 function handleClick() {
