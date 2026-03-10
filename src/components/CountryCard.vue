@@ -2,7 +2,7 @@
   <section class="quiz-card">
     <img :src="flagUrl" :alt="'Flag of ' + correctAnswer" class="flag-image" />
 
-    <h2>A quel pays / etat appartient ce drapeau ?</h2>
+    <h2>À quel pays / état appartient ce drapeau ?</h2>
 
     <div class="answers">
       <button
@@ -59,23 +59,21 @@ defineEmits(["select-answer", "next-question"])
 
 function getButtonClass(option) {
   if (!props.answered) return ""
-
   if (option === props.correctAnswer) return "correct"
   if (option === props.selectedAnswer && option !== props.correctAnswer) {
     return "wrong"
   }
-
   return ""
 }
 </script>
 
 <style scoped>
 .quiz-card {
-  background: white;
+  background: rgb(221, 244, 255);
   border: 1px solid #d9d9d9;
   border-radius: 16px;
   padding: 24px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
 }
 
 .flag-image {
@@ -91,7 +89,7 @@ function getButtonClass(option) {
 }
 
 h2 {
-  font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif ;
+  font-family: 'Trebuchet MS', Arial, sans-serif;
   margin: 0 0 20px;
   text-align: center;
 }
@@ -106,18 +104,17 @@ h2 {
   padding: 14px;
   border: 1px solid #cfcfcf;
   border-radius: 12px;
-  background: #f8f8f8;
+  background: rgb(142, 219, 255);
   cursor: pointer;
   font-size: 1rem;
-  transition: transform 0.15s ease, background 0.15s ease;
 }
 
 .answer-button:hover:enabled {
-  background: #efefef;
+  background: rgb(173, 226, 251);
 }
 
 .answer-button.correct {
-  background: #dcfce7;
+  background: #acfcc8;
   border-color: #16a34a;
 }
 
@@ -138,14 +135,14 @@ h2 {
   padding: 12px 18px;
   border: none;
   border-radius: 12px;
-  background: #2563eb;
+  background: #313131;
   color: white;
   cursor: pointer;
   font-size: 1rem;
 }
 
 .next-button:hover {
-  background: #1d4ed8;
+  background: #1e1e1e;
 }
 
 @media (max-width: 640px) {

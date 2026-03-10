@@ -2,85 +2,103 @@
   <div class="app">
     <header class="app-header">
       <h1>Quizz Drapeaux</h1>
-      <p>Teste tes connaissances en drapeaux</p>
+      <p>Explore les drapeaux du monde et teste tes connaissances</p>
     </header>
 
+    <nav class="tabs">
+      <button class="tab-button" :class="{ active: activeTab === 'list' }" @click="activeTab = 'list'">
+        Liste des drapeaux
+      </button>
+
+      <button class="tab-button" :class="{ active: activeTab === 'quiz' }" @click="activeTab = 'quiz'">
+        Quizz
+      </button>
+    </nav>
+
     <main>
-      <section class="controls">
-        <label>
-          Région :
-          <select v-model="selectedRegion" @change="restartQuiz">
-            <option value="All">All</option>
-            <option v-for="region in regions" :key="region" :value="region">
-              {{ region }}
-            </option>
-          </select>
-        </label>
-
-        <label>
-          Trier par :
-          <select v-model="sortOption" @change="restartQuiz">
-            <option value="name-asc">Nom A-Z</option>
-            <option value="name-desc">Nom Z-A</option>
-            <option value="population-desc">Population élevée à basse</option>
-            <option value="population-asc">Population basse à élevée</option>
-          </select>
-        </label>
-
-        <button class="restart-button" @click="restartQuiz">Recommencer le quizz</button>
-      </section>
-
-      <section class="score-bar">
-        <p><strong>Score :</strong> {{ score }}/{{ questionNumber - 1 }}</p>
-        <p><strong>Meilleur score :</strong> {{ bestScore }}</p>
-        <p><strong>Question :</strong> {{ questionNumber }}/{{ maxQuestions }}</p>
-      </section>
-
       <p v-if="loading" class="status">Chargement des pays...</p>
       <p v-else-if="error" class="status error">{{ error }}</p>
-      <p v-else-if="sortedCountries.length < 10" class="status"> Pas assez de pays pour en faire un quizz</p>
 
-      <section v-else-if="quizFinished" class="final-screen">
-        <h2>Quizz terminé</h2>
-        <p>Votre score: {{ score }}/{{ maxQuestions }}</p>
-        <button class="restart-button" @click="restartQuiz">Rejouer</button>
-      </section>
+      <template v-else>
+        <!-- LISTE DES DRAPEAUX -->
+        <section v-if="activeTab === 'list'">
+          <section class="controls">
+            <label>
+              Région :
+              <select v-model="listRegion">
+                <option value="All">Toutes</option>
+                <option v-for="region in regions" :key="region" :value="region">
+                  {{ region }}
+                </option>
+              </select>
+            </label>
 
-      <CountryCard
-        v-else-if="currentQuestion"
-        :flagUrl="currentQuestion.flagUrl"
-        :options="currentQuestion.options"
-        :correctAnswer="currentQuestion.correctAnswer"
-        :answered="answered"
-        :selectedAnswer="selectedAnswer"
-        :statusMessage="statusMessage"
-        @select-answer="selectAnswer"
-        @next-question="nextQuestion"
-      />
+            <label>
+              Trier par :
+              <select v-model="listSortOption">
+                <option value="name-asc">Nom A-Z</option>
+                <option value="name-desc">Nom Z-A</option>
+              </select>
+            </label>
+          </section>
 
-      <section class="country-preview" v-if="sortedCountries.length">
-        <h2>Aperçu des pays</h2>
-        <p class="preview-text">
-          Cela provient de l'API RestCountries. Elle est filtrée par région et triée selon l'ordre que vous avez sélectionné.
-        </p>
+          <section class="preview-grid">
+            <CountryListCard v-for="country in sortedListCountries" :key="country.id" :name="country.name"
+              :flagUrl="country.flagUrl" :region="country.region" :population="country.population" />
+          </section>
+        </section>
 
-        <div class="preview-grid">
-          <article
-            v-for="country in sortedCountries.slice(0, 300)"
-            :key="country.id"
-            class="preview-card"
-          >
-            <img :src="country.flagUrl" :alt="country.name" />
-            <h3>{{ country.name }}</h3>
-            <p>{{ country.region }}</p>
-            <p>{{ country.population.toLocaleString() }} Population</p>
-          </article>
-        </div>
-      </section>
+        <!-- QUIZ -->
+        <section v-else-if="activeTab === 'quiz'">
+          <section class="controls">
+            <label>
+              Région :
+              <select v-model="quizRegion" @change="restartQuiz">
+                <option value="All">Toutes</option>
+                <option v-for="region in regions" :key="region" :value="region">
+                  {{ region }}
+                </option>
+              </select>
+            </label>
+            <label>
+              Difficulté :
+              <select v-model="quizDifficulty" @change="restartQuiz">
+                <option value="all">Toutes</option>
+                <option value="easy">Facile</option>
+                <option value="medium">Moyen</option>
+                <option value="hard">Difficile</option>
+              </select>
+            </label>
+
+            <button class="restart-button" @click="restartQuiz">
+              Recommencer le quiz
+            </button>
+          </section>
+
+          <section class="score-bar">
+            <p><strong>Score :</strong> {{ score }}/{{ questionNumber - 1 }}</p>
+            <p><strong>Question :</strong> {{ questionNumber }}/{{ maxQuestions }}</p>
+          </section>
+
+          <p v-if="sortedQuizCountries.length < 4" class="status">
+            Pas assez de pays pour faire un quiz.
+          </p>
+
+          <section v-else-if="quizFinished" class="final-screen">
+            <h2>Quiz terminé</h2>
+            <p>Votre score : {{ score }}/{{ maxQuestions }}</p>
+            <button class="restart-button" @click="restartQuiz">Rejouer</button>
+          </section>
+
+          <CountryCard v-else-if="currentQuestion" :flagUrl="currentQuestion.flagUrl" :options="currentQuestion.options"
+            :correctAnswer="currentQuestion.correctAnswer" :answered="answered" :selectedAnswer="selectedAnswer"
+            :statusMessage="statusMessage" @select-answer="selectAnswer" @next-question="nextQuestion" />
+        </section>
+      </template>
     </main>
 
     <footer class="app-footer">
-      <p>Alice JACQUES • IMAC • Projet Vue.js • Quizz drapeaux</p>
+      <p>Alice JACQUES • IMAC • Projet Vue.js • Quiz drapeaux</p>
     </footer>
   </div>
 </template>
@@ -88,15 +106,19 @@
 <script setup>
 import { computed, onMounted, ref, watch } from "vue"
 import CountryCard from "./components/CountryCard.vue"
+import CountryListCard from "./components/CountryListCard.vue"
 import { getCountryData } from "./services/api/flagsAPI.js"
 
 const countries = ref([])
 const loading = ref(false)
 const error = ref("")
 
-const selectedRegion = ref(localStorage.getItem("selectedRegion") || "All")
-const sortOption = ref(localStorage.getItem("sortOption") || "name-asc")
-const bestScore = ref(Number(localStorage.getItem("bestScore")) || 0)
+const activeTab = ref("list")
+
+const listRegion = ref(localStorage.getItem("listRegion") || "All")
+const listSortOption = ref(localStorage.getItem("listSortOption") || "name-asc")
+
+const quizRegion = ref(localStorage.getItem("quizRegion") || "All")
 
 const score = ref(0)
 const questionNumber = ref(1)
@@ -106,17 +128,19 @@ const answered = ref(false)
 const selectedAnswer = ref("")
 const statusMessage = ref("")
 const quizFinished = ref(false)
+const usedCountryIds = ref([])
+const quizDifficulty = ref("all")
 
-watch(selectedRegion, (value) => {
-  localStorage.setItem("selectedRegion", value)
+watch(listRegion, (value) => {
+  localStorage.setItem("listRegion", value)
 })
 
-watch(sortOption, (value) => {
-  localStorage.setItem("sortOption", value)
+watch(listSortOption, (value) => {
+  localStorage.setItem("listSortOption", value)
 })
 
-watch(bestScore, (value) => {
-  localStorage.setItem("bestScore", String(value))
+watch(quizRegion, (value) => {
+  localStorage.setItem("quizRegion", value)
 })
 
 const regions = computed(() => {
@@ -124,33 +148,42 @@ const regions = computed(() => {
   return uniqueRegions.sort((a, b) => a.localeCompare(b))
 })
 
-const filteredCountries = computed(() => {
-  if (selectedRegion.value === "All") {
-    return countries.value
-  }
-
-  return countries.value.filter((country) => country.region === selectedRegion.value)
+const filteredListCountries = computed(() => {
+  if (listRegion.value === "All") return countries.value
+  return countries.value.filter((country) => country.region === listRegion.value)
 })
 
-const sortedCountries = computed(() => {
-  const result = [...filteredCountries.value]
+const sortedListCountries = computed(() => {
+  const result = [...filteredListCountries.value]
 
-  switch (sortOption.value) {
-    case "name-asc":
-      result.sort((a, b) => a.name.localeCompare(b.name))
-      break
-    case "name-desc":
-      result.sort((a, b) => b.name.localeCompare(a.name))
-      break
-    case "population-asc":
-      result.sort((a, b) => a.population - b.population)
-      break
-    case "population-desc":
-      result.sort((a, b) => b.population - a.population)
-      break
+  if (listSortOption.value === "name-asc") {
+    result.sort((a, b) => a.name.localeCompare(b.name))
+  } else {
+    result.sort((a, b) => b.name.localeCompare(a.name))
   }
 
   return result
+})
+
+const filteredQuizCountries = computed(() => {
+
+  let result = countries.value
+
+  if (quizRegion.value !== "All") {
+    result = result.filter(c => c.region === quizRegion.value)
+  }
+
+  if (quizDifficulty.value !== "all") {
+    result = result.filter(c => c.difficulty === quizDifficulty.value)
+  }
+
+  return result
+})
+
+const sortedQuizCountries = computed(() => {
+  return [...filteredQuizCountries.value].sort((a, b) =>
+    a.name.localeCompare(b.name)
+  )
 })
 
 function getRandomItem(array) {
@@ -160,23 +193,34 @@ function getRandomItem(array) {
 function shuffle(array) {
   const copy = [...array]
 
-  for (let i = copy.length - 1; i > 0; i -= 1) {
+  for (let i = copy.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1))
-    ;[copy[i], copy[j]] = [copy[j], copy[i]]
+      ;[copy[i], copy[j]] = [copy[j], copy[i]]
   }
 
   return copy
 }
 
 function buildQuestion() {
-  const pool = sortedCountries.value
+  const pool = sortedQuizCountries.value
 
   if (pool.length < 4) {
     currentQuestion.value = null
     return
   }
 
-  const correctCountry = getRandomItem(pool)
+  const availableCountries = pool.filter(
+    (country) => !usedCountryIds.value.includes(country.id)
+  )
+
+  if (availableCountries.length === 0) {
+    quizFinished.value = true
+    currentQuestion.value = null
+    return
+  }
+
+  const correctCountry = getRandomItem(availableCountries)
+  usedCountryIds.value.push(correctCountry.id)
 
   const wrongOptions = shuffle(
     pool.filter((country) => country.id !== correctCountry.id)
@@ -204,25 +248,20 @@ function selectAnswer(option) {
   answered.value = true
 
   if (option === currentQuestion.value.correctAnswer) {
-    score.value += 1
+    score.value++
     statusMessage.value = "Bien joué !"
   } else {
-    statusMessage.value = `Bien tenté, la réponse correcte était ${currentQuestion.value.correctAnswer}.`
+    statusMessage.value = `Bien tenté, la bonne réponse était ${currentQuestion.value.correctAnswer}.`
   }
 }
 
 function nextQuestion() {
   if (questionNumber.value >= maxQuestions) {
     quizFinished.value = true
-
-    if (score.value > bestScore.value) {
-      bestScore.value = score.value
-    }
-
     return
   }
 
-  questionNumber.value += 1
+  questionNumber.value++
   buildQuestion()
 }
 
@@ -230,6 +269,7 @@ function restartQuiz() {
   score.value = 0
   questionNumber.value = 1
   quizFinished.value = false
+  usedCountryIds.value = []
   buildQuestion()
 }
 
@@ -247,9 +287,7 @@ async function loadCountries() {
   }
 }
 
-onMounted(() => {
-  loadCountries()
-})
+onMounted(loadCountries)
 </script>
 
 <style scoped>
@@ -276,7 +314,29 @@ onMounted(() => {
 
 .app-header p {
   margin: 0;
-  color: #555;
+  color: #313131;
+}
+
+.tabs {
+  display: flex;
+  gap: 12px;
+  margin: 20px 0 24px;
+  flex-wrap: wrap;
+}
+
+.tab-button {
+  border: none;
+  border-radius: 12px;
+  background: #d9d9d9;
+  color: #222;
+  padding: 12px 16px;
+  cursor: pointer;
+  font-size: 1rem;
+}
+
+.tab-button.active {
+  background: #313131;
+  color: white;
 }
 
 .controls {
@@ -302,7 +362,7 @@ onMounted(() => {
 .restart-button {
   border: none;
   border-radius: 12px;
-  background: #111827;
+  background: #313131;
   color: white;
   cursor: pointer;
 }
@@ -326,47 +386,18 @@ onMounted(() => {
   color: #dc2626;
 }
 
+.preview-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 16px;
+}
+
 .final-screen {
   padding: 24px;
   background: white;
   border: 1px solid #ddd;
   border-radius: 16px;
   text-align: center;
-}
-
-.country-preview {
-  margin-top: 36px;
-}
-
-.preview-text {
-  color: #555;
-}
-
-.preview-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-  gap: 16px;
-  margin-top: 16px;
-}
-
-.preview-card {
-  background: white;
-  border: 1px solid #ddd;
-  border-radius: 14px;
-  overflow: hidden;
-  padding-bottom: 12px;
-}
-
-.preview-card img {
-  width: 100%;
-  height: 110px;
-  object-fit: cover;
-  display: block;
-}
-
-.preview-card h3,
-.preview-card p {
-  margin: 10px 12px 0;
 }
 
 .app-footer {
