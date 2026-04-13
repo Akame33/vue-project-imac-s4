@@ -3,12 +3,15 @@ export async function getCountryData() {
     "https://restcountries.com/v3.1/all?fields=name,flags,region,population,cca2"
   )
 
+  if (!response.ok) {
+    throw new Error("Failed to fetch country data.")
+  }
+
   const data = await response.json()
 
   return data
     .filter((country) => country.name?.common && country.flags?.png)
     .map((country, index) => {
-
       let difficulty = "medium"
 
       if (country.population > 50000000) difficulty = "easy"

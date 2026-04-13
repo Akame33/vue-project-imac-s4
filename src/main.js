@@ -1,5 +1,5 @@
-import { createApp } from 'vue'
-import App from './App.vue'
+import { createApp } from "vue"
+import App from "./App.vue"
+import router from "./router"
 
-// C'est dans ce fichier qu'on crée l'app Vue et qu'on la passe dans le index.html
-createApp(App).mount('#app')
+createApp(App).use(router).mount("#app")
