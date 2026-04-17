@@ -2,17 +2,11 @@
   <section class="quiz-card">
     <img :src="flagUrl" :alt="'Flag of ' + correctAnswer" class="flag-image" />
 
-    <h2>À quel pays / état appartient ce drapeau ?</h2>
+    <h2>Which country or state does this flag belong to?</h2>
 
     <div class="answers">
-      <button
-        v-for="option in options"
-        :key="option"
-        class="answer-button"
-        :class="getButtonClass(option)"
-        :disabled="answered"
-        @click="$emit('select-answer', option)"
-      >
+      <button v-for="option in options" :key="option" class="answer-button" :class="getButtonClass(option)"
+        :disabled="answered" @click="$emit('select-answer', option)">
         {{ option }}
       </button>
     </div>
@@ -22,7 +16,7 @@
     </p>
 
     <button v-if="answered" class="next-button" @click="$emit('next-question')">
-      Question suivante
+      Next question
     </button>
   </section>
 </template>

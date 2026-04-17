@@ -4,7 +4,7 @@
     <div class="country-content">
       <h3>{{ name }}</h3>
       <p>{{ region }}</p>
-      <p>{{ population.toLocaleString() }} habitants</p>
+      <p>{{ population.toLocaleString() }} Population</p>
     </div>
   </article>
 </template>

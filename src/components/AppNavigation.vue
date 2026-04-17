@@ -1,6 +1,6 @@
 <template>
     <nav class="tabs">
-        <RouterLink to="/" class="tab-button">Liste des drapeaux</RouterLink>
+        <RouterLink to="/" class="tab-button">Flags List</RouterLink>
         <RouterLink to="/quiz" class="tab-button">Quiz</RouterLink>
     </nav>
 </template>

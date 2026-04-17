@@ -31,7 +31,7 @@
             </section>
 
             <section class="score-bar">
-                <p><strong>Score:</strong> {{ score }}/{{ questionNumber - 1 }}</p>
+                <p><strong>Result:</strong> {{ score }}/{{ questionNumber - 1 }}</p>
                 <p><strong>Question:</strong> {{ questionNumber }}/{{ maxQuestions }}</p>
             </section>
 
@@ -40,9 +40,9 @@
             </p>
 
             <section v-else-if="quizFinished" class="final-screen">
-                <h2>Quiz terminé</h2>
-                <p>Votre score : {{ score }}/{{ maxQuestions }}</p>
-                <button class="restart-button" @click="restartQuiz">Rejouer</button>
+                <h2>Quiz finished</h2>
+                <p>Your result : {{ score }}/{{ maxQuestions }}</p>
+                <button class="restart-button" @click="restartQuiz">Restart</button>
             </section>
 
             <transition name="fade" mode="out-in">
